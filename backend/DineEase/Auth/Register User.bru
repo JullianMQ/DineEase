@@ -1,0 +1,23 @@
+meta {
+  name: Register User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{localURL}}/api/auth/sign-up/email
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Sofia Lim",
+    "email": "sofia.lim@example.com",
+    "password": "test1234"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
