@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import Features from '@/components/Features.vue'
+import Hero from '@/components/Hero.vue'
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
+  <main class="">
+    <div class="">
+      <Hero></Hero>
+    </div>
+    <div class="">
+      <Features></Features>
+    </div>
   </main>
 </template>
