@@ -1,0 +1,21 @@
+meta {
+  name: Update Menu Item
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{localURL}}/api/menu/68f114301cc330d2541fce7e
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Garlic Parmesian Fries"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

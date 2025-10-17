@@ -2,8 +2,13 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { auth } from "./utils/auth.js";
 import { seedMenu, seedReservation } from "./utils/seed.js";
-import { createMenuItem, getAllMenuItems } from "./handlers/menuHandler.js";
-import { getAllReservations } from "./handlers/reservationHandler.js";
+import {
+  createMenuItem,
+  deleteMenuItem,
+  getAllMenuItems,
+  updateMenuItem,
+} from "./handlers/menuHandler.js";
+import { createReservation, deleteReservation, getAllReservations, updateReservation } from "./handlers/reservationHandler.js";
 
 const app = new Hono();
 // WARN: FOR TESTING AND PROVIDING DATA IN THE DATABASE
@@ -32,8 +37,45 @@ app.get("/api/menu", async (c) => {
 
 app.post("/api/menu", async (c) => {
   try {
-    await createMenuItem(c);
-    console.log("test");
+    const res = await createMenuItem(c);
+    c.status(res.status);
+    if (res.error) {
+      return c.json(res.error);
+    }
+
+    return c.json(res.success);
+  } catch (e) {
+    console.error(e);
+    c.status(500);
+    return c.json({ error: "Server error, check the logs" });
+  }
+});
+
+app.put("/api/menu/:id", async (c) => {
+  try {
+    const res = await updateMenuItem(c);
+    c.status(res.status);
+    if (res.error) {
+      return c.json(res.error);
+    }
+
+    return c.json(res.success);
+  } catch (e) {
+    console.error(e);
+    c.status(500);
+    return c.json({ error: "Server error, check the logs" });
+  }
+});
+
+app.delete("/api/menu/:id", async (c) => {
+  try {
+    const res = await deleteMenuItem(c);
+    c.status(res.status);
+    if (res.error) {
+      return c.json(res.error);
+    }
+
+    return c.json(res.success);
   } catch (e) {
     console.error(e);
     c.status(500);
@@ -45,8 +87,56 @@ app.post("/api/menu", async (c) => {
 //==================================RESERVATION==============================
 app.get("/api/reservations", async (c) => {
   try {
-    const menu = await getAllReservations(c);
-    return c.json(menu);
+    const reservations = await getAllReservations(c);
+    return c.json(reservations);
+  } catch (e) {
+    console.error(e);
+    c.status(500);
+    return c.json({ error: "Server error, check the logs" });
+  }
+});
+
+app.post("/api/reservations", async (c) => {
+  try {
+    const res = await createReservation(c);
+    c.status(res.status);
+    if (res.error) {
+      return c.json(res.error);
+    }
+
+    return c.json(res.success);
+  } catch (e) {
+    console.error(e);
+    c.status(500);
+    return c.json({ error: "Server error, check the logs" });
+  }
+});
+
+app.put("/api/reservations/:id", async (c) => {
+  try {
+    const res = await updateReservation(c);
+    c.status(res.status);
+    if (res.error) {
+      return c.json(res.error);
+    }
+
+    return c.json(res.success);
+  } catch (e) {
+    console.error(e);
+    c.status(500);
+    return c.json({ error: "Server error, check the logs" });
+  }
+});
+
+app.delete("/api/reservations/:id", async (c) => {
+  try {
+    const res = await deleteReservation(c);
+    c.status(res.status);
+    if (res.error) {
+      return c.json(res.error);
+    }
+
+    return c.json(res.success);
   } catch (e) {
     console.error(e);
     c.status(500);

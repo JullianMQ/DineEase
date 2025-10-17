@@ -1,0 +1,21 @@
+meta {
+  name: Update Reservation
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{localURL}}/api/reservations/68f1f194c5a33b1cabd8b2c8
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "reservee_name": "Garlic Parmesian Fries"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
