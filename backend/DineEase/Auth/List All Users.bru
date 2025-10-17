@@ -1,0 +1,15 @@
+meta {
+  name: List All Users
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{localURL}}/api/auth/admin/list-users
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

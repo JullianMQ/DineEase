@@ -1,0 +1,21 @@
+meta {
+  name: Sign Out User
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{localURL}}/api/auth/sign-out
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "test user"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

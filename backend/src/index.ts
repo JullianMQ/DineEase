@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { auth } from "./utils/auth.js";
+import { auth, type AuthType } from "./utils/auth.js";
 import { seedMenu, seedReservation } from "./utils/seed.js";
 import {
   createMenuItem,
@@ -8,17 +8,30 @@ import {
   getAllMenuItems,
   updateMenuItem,
 } from "./handlers/menuHandler.js";
-import { createReservation, deleteReservation, getAllReservations, updateReservation } from "./handlers/reservationHandler.js";
+import {
+  createReservation,
+  deleteReservation,
+  getAllReservations,
+  updateReservation,
+} from "./handlers/reservationHandler.js";
+import { canModifyReservation, requireAdmin, requireAuth } from "./middleware/authMiddleware.js";
+import { cors } from "hono/cors";
 
-const app = new Hono();
+const app = new Hono<{
+  Variables: {
+    user: typeof auth.$Infer.Session.user | null;
+    session: typeof auth.$Infer.Session.session | null;
+  };
+}>({ strict: false });
 // WARN: FOR TESTING AND PROVIDING DATA IN THE DATABASE
 // await seedMenu()
 // await seedReservation()
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+// app.get("/", (c) => {
+//   return c.text("Hello Hono!");
+// });
 
+app.use("*", cors())
 //==================================USER=====================================
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 //==================================USER=====================================
@@ -35,7 +48,7 @@ app.get("/api/menu", async (c) => {
   }
 });
 
-app.post("/api/menu", async (c) => {
+app.post("/api/menu", requireAdmin, async (c) => {
   try {
     const res = await createMenuItem(c);
     c.status(res.status);
@@ -51,7 +64,7 @@ app.post("/api/menu", async (c) => {
   }
 });
 
-app.put("/api/menu/:id", async (c) => {
+app.put("/api/menu/:id", requireAdmin, async (c) => {
   try {
     const res = await updateMenuItem(c);
     c.status(res.status);
@@ -67,7 +80,7 @@ app.put("/api/menu/:id", async (c) => {
   }
 });
 
-app.delete("/api/menu/:id", async (c) => {
+app.delete("/api/menu/:id", requireAdmin, async (c) => {
   try {
     const res = await deleteMenuItem(c);
     c.status(res.status);
@@ -112,7 +125,7 @@ app.post("/api/reservations", async (c) => {
   }
 });
 
-app.put("/api/reservations/:id", async (c) => {
+app.put("/api/reservations/:id", canModifyReservation, async (c) => {
   try {
     const res = await updateReservation(c);
     c.status(res.status);
@@ -128,7 +141,7 @@ app.put("/api/reservations/:id", async (c) => {
   }
 });
 
-app.delete("/api/reservations/:id", async (c) => {
+app.delete("/api/reservations/:id", canModifyReservation, async (c) => {
   try {
     const res = await deleteReservation(c);
     c.status(res.status);

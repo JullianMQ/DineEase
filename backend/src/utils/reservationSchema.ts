@@ -13,7 +13,7 @@ export const zodReservationSchema = z.object({
   time: z
     .string()
     .regex(timeRegex, { message: "Time must be in format HH:MM (24-hour)" }),
-  status: z.enum(["Pending", "Confirmed", "Cancelled"]),
+  status: z.enum(["Pending", "Confirmed", "Cancelled"]).default("Pending"),
 });
 
 interface reservationSchema {

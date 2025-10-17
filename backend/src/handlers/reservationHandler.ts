@@ -2,15 +2,38 @@ import type { Context } from "hono";
 import { db } from "../utils/db.js";
 import { NewError, NewSuccess, type HandlerResult } from "../utils/success.js";
 import { ZodError } from "zod";
-import { reservationSchemaChecker, zodReservationSchema } from "../utils/reservationSchema.js";
+import {
+  reservationSchemaChecker,
+  zodReservationSchema,
+} from "../utils/reservationSchema.js";
 import isIDValid from "../utils/isIdValid.js";
 import { ObjectId } from "mongodb";
+import { auth } from "../utils/auth.js";
 
-const reservations = db.collection("reservations");
+export const reservations = db.collection("reservations");
 
 const getAllReservations = async (c: Context) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+  if (!session) {
+    c.status(401);
+    return {
+      message: "No session found",
+    };
+  }
+
+  if (session.user.role === "admin") {
+    try {
+      const reservationData = await reservations.find().toArray();
+      return reservationData;
+    } catch (e) {
+      throw `Error: ${e}`;
+    }
+  }
+
   try {
-    const reservationData = await reservations.find().toArray();
+    const reservationData = await reservations
+      .find({ email: session.user.email })
+      .toArray();
     return reservationData;
   } catch (e) {
     throw `Error: ${e}`;
@@ -74,25 +97,12 @@ const updateReservation = async (c: Context): Promise<HandlerResult> => {
 
   try {
     const updateBody = await c.req.json();
-    const reservation_id = isIDValid(c);
-    if (!reservation_id) {
-      return {
-        status: 400,
-        error: NewError(
-          "Error inputted id is incorrect, should be 24 characters",
-        ),
-      };
-    }
+    const reservation_id = c.req.param("id");
 
-    const res = await reservations.findOne({ _id: reservation_id });
-    if (!res) {
-      return {
-        status: 404,
-        error: NewError("No reservation with this id"),
-      };
-    }
-
-    const resZod = zodReservationSchema.strict().partial().safeParse(updateBody);
+    const resZod = zodReservationSchema
+      .strict()
+      .partial()
+      .safeParse(updateBody);
     if (!resZod.success) {
       return {
         status: 400,
@@ -100,7 +110,10 @@ const updateReservation = async (c: Context): Promise<HandlerResult> => {
       };
     }
 
-    await reservations.updateOne({ _id: new ObjectId(reservation_id) }, { $set: updateBody });
+    await reservations.updateOne(
+      { _id: new ObjectId(reservation_id) },
+      { $set: updateBody },
+    );
 
     return {
       status: 200,
@@ -114,7 +127,6 @@ const updateReservation = async (c: Context): Promise<HandlerResult> => {
     };
   }
 };
-
 
 const deleteReservation = async (c: Context): Promise<HandlerResult> => {
   try {
@@ -156,4 +168,9 @@ const deleteReservation = async (c: Context): Promise<HandlerResult> => {
     };
   }
 };
-export { getAllReservations, createReservation, updateReservation, deleteReservation };
+export {
+  getAllReservations,
+  createReservation,
+  updateReservation,
+  deleteReservation,
+};
