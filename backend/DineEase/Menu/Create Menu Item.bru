@@ -1,0 +1,26 @@
+meta {
+  name: Create Menu Item
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{localURL}}/api/menu
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+   "name": "Test Item",
+    "description": "Lorem ipsum be like nsth nstchieao",
+      "price": 350,
+      "image_url": "https://images.unsplash.com/photo-1736826201130-c8a3d4e1427c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074",
+      "category": "Appetizer",
+      "available": true
+  }
+}
+
+settings {
+  encodeUrl: true
+}

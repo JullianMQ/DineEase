@@ -2,7 +2,7 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { auth } from "./utils/auth.js";
 import { seedMenu, seedReservation } from "./utils/seed.js";
-import { getAllMenuItems } from "./handlers/menuHandler.js";
+import { createMenuItem, getAllMenuItems } from "./handlers/menuHandler.js";
 import { getAllReservations } from "./handlers/reservationHandler.js";
 
 const app = new Hono();
@@ -18,7 +18,6 @@ app.get("/", (c) => {
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 //==================================USER=====================================
 
-
 //==================================MENU=====================================
 app.get("/api/menu", async (c) => {
   try {
@@ -30,8 +29,18 @@ app.get("/api/menu", async (c) => {
     return c.json({ error: "Server error, check the logs" });
   }
 });
-//==================================MENU=====================================
 
+app.post("/api/menu", async (c) => {
+  try {
+    await createMenuItem(c);
+    console.log("test");
+  } catch (e) {
+    console.error(e);
+    c.status(500);
+    return c.json({ error: "Server error, check the logs" });
+  }
+});
+//==================================MENU=====================================
 
 //==================================RESERVATION==============================
 app.get("/api/reservations", async (c) => {
@@ -45,7 +54,6 @@ app.get("/api/reservations", async (c) => {
   }
 });
 //==================================RESERVATION==============================
-
 
 serve(
   {
