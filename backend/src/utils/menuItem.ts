@@ -5,10 +5,10 @@ export const zodMenuItemSchema = z.object({
   name: z.string(),
   description: z.string(),
   price: z.float64(),
-  image_url: z.httpUrl(),
+  image_url: z.string(),
   category: z.enum(["Appetizer", "Main Course", "Dessert", "Beverage"]),
+  available: z.boolean(),
 });
-available: z.boolean(),
 
 interface menuItemSchema {
   name: string;
@@ -24,6 +24,7 @@ export const menuItemSchemaChecker = (
 ): menuItemSchema | ZodError => {
   try {
     const res = zodMenuItemSchema.parse(body);
+    console.log("res:", res);
     return res;
   } catch (e) {
     if (e instanceof ZodError) {

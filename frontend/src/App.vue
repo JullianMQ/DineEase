@@ -6,9 +6,11 @@ import axiosInstance, { apiUrl } from './api/config'
 </script>
 
 <script lang="ts">
+export let role: string
 const isSignedIn = async () => {
   try {
     const res = await axiosInstance.get(`${apiUrl}/auth/get-session`)
+    role = res.data.user.role
     if (!res.data) {
       return false
     }

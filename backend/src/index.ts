@@ -17,6 +17,8 @@ import {
 } from "./handlers/reservationHandler.js";
 import { canModifyReservation, requireAdmin, requireAuth } from "./middleware/authMiddleware.js";
 import { cors } from "hono/cors";
+import { uploadImage } from "./handlers/uploadHandler.js";
+import { serveStatic } from "@hono/node-server/serve-static";
 
 const app = new Hono<{
   Variables: {
@@ -38,6 +40,12 @@ app.use("*", cors({
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }))
+
+app.use('/uploads/*', serveStatic({ root: './public' }))
+app.use("/uploads/*", async (c, next) => {
+  await next();
+});
+
 //==================================USER=====================================
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 //==================================USER=====================================
@@ -63,6 +71,21 @@ app.post("/api/menu", requireAdmin, async (c) => {
     }
 
     return c.json(res.success);
+  } catch (e) {
+    console.error(e);
+    c.status(500);
+    return c.json({ error: "Server error, check the logs" });
+  }
+});
+
+app.post("/api/upload/image", requireAdmin, async (c) => {
+  try {
+    const res = await uploadImage(c);
+    c.status(res.status);
+    if (res.error) {
+      return c.json(res.error);
+    }
+    return c.json(res.success?.urlImage);
   } catch (e) {
     console.error(e);
     c.status(500);

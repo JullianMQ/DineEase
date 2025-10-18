@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import axiosInstance, { apiUrl } from '@/api/config'
+import axiosInstance, { apiUrl, cancelReservation, confirmReservation } from '@/api/config'
+import { role } from '@/App.vue'
 import Button from '@/components/ui/button/Button.vue'
 import Card from '@/components/ui/card/Card.vue'
 import CardContent from '@/components/ui/card/CardContent.vue'
@@ -8,6 +9,7 @@ import { ref } from 'vue'
 
 let items = ref<
   {
+    _id: string
     reservee_name: string
     email: string
     seat_num: number
@@ -20,7 +22,9 @@ let items = ref<
 try {
   const res = await axiosInstance.get(`${apiUrl}/reservations`)
   items = res.data
-} catch (e) {}
+} catch (e) {
+  console.error('Error:', e)
+}
 </script>
 
 <template>
@@ -54,6 +58,16 @@ try {
             <div class="flex gap-2 items-center *:text-lg">
               <img src="/email.svg" alt="" class="size-6" />
               <p class="">{{ item.email }}</p>
+            </div>
+            <div v-if="role === 'user'" class="flex mt-4 gap-2">
+              <Button @click="confirmReservation(item._id)">Confirm</Button>
+              <Button
+                @click="cancelReservation(item._id)"
+                variant="ghost"
+                class="border border-gray-300"
+              >
+                Cancel
+              </Button>
             </div>
           </div>
         </CardContent>

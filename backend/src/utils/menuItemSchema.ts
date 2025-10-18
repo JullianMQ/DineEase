@@ -5,7 +5,7 @@ export const zodMenuItemSchema = z.object({
   name: z.string(),
   description: z.string(),
   price: z.float64(),
-  image_url: z.httpUrl(),
+  image_url: z.url(),
   category: z.enum(["Appetizer", "Main Course", "Dessert", "Beverage"]),
   available: z.boolean(),
 });

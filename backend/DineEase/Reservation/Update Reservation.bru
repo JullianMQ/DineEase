@@ -5,18 +5,20 @@ meta {
 }
 
 put {
-  url: {{localURL}}/api/reservations/68f210bc597390f2cb976b0e
+  url: {{localURL}}/api/reservations/68f1f1870935788088655693
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "reservee_name": "Noah Garcia"
+  //   "reservee_name": "Noah Garcia",
+    "status": "Confirmed"
     // "reservee_name": "Joshua Garcia"
   }
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }
