@@ -6,10 +6,12 @@ export const containerClass = 'w-full h-screen flex items-center justify-center 
 </script>
 
 <script setup lang="ts">
+import axiosInstance, { apiUrl } from '@/api/config'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/components/ui/toast'
 import { ref } from 'vue'
 
 const formData = ref<{
@@ -24,12 +26,40 @@ const formData = ref<{
   password: '',
 })
 
-const handleSubmit = () => {
-  console.log('Form Data:', formData.value)
-  console.log('First name:', formData.value.first_name)
-  console.log('Last name:', formData.value.last_name)
-  console.log('Email:', formData.value.email)
-  console.log('Password:', formData.value.password)
+const resetForm = () => {
+  formData.value.first_name = ''
+  formData.value.last_name = ''
+  formData.value.email = ''
+  formData.value.password = ''
+}
+
+const handleSubmit = async () => {
+  try {
+    await axiosInstance.post(`${apiUrl}/auth/sign-up/email`, {
+      name: `${formData.value.first_name} ${formData.value.last_name}`,
+      email: formData.value.email,
+      password: formData.value.password,
+    })
+
+    toast({
+      variant: 'default',
+      title: 'Success',
+      description: 'Sign up success, enjoy!',
+    })
+
+    setTimeout(() => {
+      resetForm()
+      window.location.pathname = '/sign-in'
+    }, 2000)
+  } catch (e) {
+    console.error('error', e)
+    toast({
+      variant: 'destructive',
+      title: 'Error',
+      description: 'Sign up error, please make sure all fields correct',
+    })
+    return
+  }
 }
 </script>
 

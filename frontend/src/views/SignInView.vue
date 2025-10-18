@@ -23,19 +23,22 @@ const resetForm = () => {
 
 const handleSubmit = async () => {
   try {
-    const res = await axiosInstance.post(`${apiUrl}/auth/sign-in/email`, {
+    await axiosInstance.post(`${apiUrl}/auth/sign-in/email`, {
       email: formData.value.email,
       password: formData.value.password,
     })
-    console.log('res', res)
+
     toast({
       variant: 'default',
       title: 'Success',
       description: 'Sign in success, enjoy!',
     })
 
-    resetForm()
-    window.location.pathname = '/'
+    setTimeout(() => {
+      resetForm()
+      window.location.pathname = '/'
+    }, 2000)
+
   } catch (e) {
     console.error('error', e)
     toast({

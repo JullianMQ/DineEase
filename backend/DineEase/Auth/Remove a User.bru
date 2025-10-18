@@ -1,0 +1,22 @@
+meta {
+  name: Remove a User
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{localURL}}/api/auth/admin/remove-user
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "userId": "68f3524f1d8f55efdc7c7b28"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

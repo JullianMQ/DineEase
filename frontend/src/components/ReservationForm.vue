@@ -8,6 +8,8 @@ import CardHeader from './ui/card/CardHeader.vue'
 import CardTitle from './ui/card/CardTitle.vue'
 import Label from './ui/label/Label.vue'
 import Input from './ui/input/Input.vue'
+import axiosInstance, { apiUrl } from '@/api/config'
+import { toast } from './ui/toast'
 
 const formData = ref<{
   reservee_name: string
@@ -23,12 +25,27 @@ const formData = ref<{
   seat_num: 0,
 })
 
-const handleSubmit = () => {
-  console.log('Form Data:', formData.value)
-  console.log('Name:', formData.value.reservee_name)
-  console.log('Email:', formData.value.email)
-  console.log('Date:', formData.value.date)
-  console.log('Time:', formData.value.time)
+const handleSubmit = async () => {
+  try {
+    await axiosInstance.post(`${apiUrl}/reservations`, {
+      reservee_name: formData.value.reservee_name,
+      email: formData.value.email,
+      seat_num: formData.value.seat_num,
+      date: formData.value.date,
+      time: formData.value.time,
+    })
+    toast({
+      title: 'Success',
+      description: 'Reserved your seat, please confirm it in the dashboard'
+    })
+  } catch (e) {
+    console.error('Error:', e)
+    toast({
+      variant: 'destructive',
+      title: 'Error',
+      description: 'Something went wrong, try again later',
+    })
+  }
 }
 </script>
 
@@ -65,7 +82,7 @@ const handleSubmit = () => {
           <Input
             id="seat"
             v-model="formData.seat_num"
-            type="text"
+            type="number"
             inputmode="numeric"
             placeholder="3"
             required

@@ -5,6 +5,7 @@ import Button from '@/components/ui/button/Button.vue'
 import Card from '@/components/ui/card/Card.vue'
 import CardContent from '@/components/ui/card/CardContent.vue'
 import CardHeader from '@/components/ui/card/CardHeader.vue'
+import { toast } from '@/components/ui/toast'
 import { ref } from 'vue'
 
 let items = ref<
@@ -24,6 +25,11 @@ try {
   items = res.data
 } catch (e) {
   console.error('Error:', e)
+  toast({
+    variant: "destructive",
+    title: "Failed",
+    description: "Make sure to have an account or sign-in to see your reservations"
+  })
 }
 </script>
 

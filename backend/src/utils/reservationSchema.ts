@@ -6,7 +6,7 @@ const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // hh:mm (24-hour)
 export const zodReservationSchema = z.object({
   reservee_name: z.string(),
   email: z.email(),
-  seat_num: z.number().int().positive(),
+  seat_num: z.int().positive(),
   date: z
     .string()
     .regex(dateRegex, { message: "Date must be in format YYYY-MM-DD" }),

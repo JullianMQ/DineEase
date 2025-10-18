@@ -53,6 +53,7 @@ interface MenuItem {
 }
 
 let items = ref<MenuItem[]>([])
+let baseAPIURL = "http://localhost:3000"
 
 const isDialogOpen = ref(false)
 const isSubmitting = ref(false)
@@ -114,16 +115,18 @@ const handleSubmit = async () => {
       },
     })
 
-    const imagePath = uploadRes.data.path
+    const imagePath = uploadRes.data
+    console.log("imagePath", imagePath)
 
     const menuItemData = {
       name: formData.value.name,
       description: formData.value.description,
       price: formData.value.price,
-      image_url: imagePath,
+      image_url: `${baseAPIURL}${imagePath}`,
       category: formData.value.category,
       available: formData.value.available,
     }
+    console.log("menuItemData", menuItemData)
 
     await axiosInstance.post(`${apiUrl}/menu`, menuItemData)
 

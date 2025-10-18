@@ -45,8 +45,9 @@ const handleSignOut = async () => {
       description: 'Sign out success, enjoy!',
     })
 
-    console.log(window.location.pathname)
-    window.location.pathname = '/'
+    setTimeout(() => {
+      window.location.pathname = '/'
+    }, 2000)
   } catch (e) {
     console.error('error', e)
     toast({
