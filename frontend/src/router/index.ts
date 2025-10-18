@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import AboutView from '../views/AboutView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import SignInView from '@/views/SignInView.vue'
 import MenuView from '@/views/MenuView.vue'
 import ReservationView from '@/views/ReservationView.vue'
+import MyReservationView from '@/views/MyReservationView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +26,11 @@ const router = createRouter({
       component: ReservationView,
     },
     {
+      path: '/reservation/mine',
+      name: 'my-reservations',
+      component: MyReservationView,
+    },
+    {
       path: '/sign-up',
       name: 'sign-up',
       component: SignUpView,
@@ -36,7 +43,7 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutView.vue'),
+      component: AboutView,
     },
   ],
 })

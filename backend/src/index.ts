@@ -12,6 +12,7 @@ import {
   createReservation,
   deleteReservation,
   getAllReservations,
+  getAvailReservation,
   updateReservation,
 } from "./handlers/reservationHandler.js";
 import { canModifyReservation, requireAdmin, requireAuth } from "./middleware/authMiddleware.js";
@@ -31,7 +32,12 @@ const app = new Hono<{
 //   return c.text("Hello Hono!");
 // });
 
-app.use("*", cors())
+app.use("*", cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+  allowHeaders: ['Content-Type', 'Authorization'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}))
 //==================================USER=====================================
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 //==================================USER=====================================
@@ -109,8 +115,20 @@ app.get("/api/reservations", async (c) => {
   }
 });
 
+app.get("/api/reservations/avail", async (c) => {
+  try {
+    const reservations = await getAvailReservation(c);
+    return c.json(reservations);
+  } catch (e) {
+    console.error(e);
+    c.status(500);
+    return c.json({ error: "Server error, check the logs" });
+  }
+})
+
 app.post("/api/reservations", async (c) => {
   try {
+    // TODO: CREATE CHECKER FOR WHICH SEATS ARE AVAILABLE ALONG WITH DATES AND TIME
     const res = await createReservation(c);
     c.status(res.status);
     if (res.error) {

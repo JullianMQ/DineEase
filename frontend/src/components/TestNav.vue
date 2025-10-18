@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import axiosInstance, { apiUrl } from '@/api/config'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { toast } from './ui/toast'
+import router from '@/router'
+import { isTrue } from '@/App.vue'
 
 const open = ref(false)
 const dropdownButtonRef = ref<HTMLButtonElement | null>(null)
@@ -12,6 +16,7 @@ const toggleNavbar = () => {
 const navLinkItems = ref([
   { text: 'Home', href: '/' },
   { text: 'Menu', href: '/menu' },
+  { text: 'Reservation', href: '/reservation' },
   { text: 'About', href: '/about' },
 ])
 
@@ -29,6 +34,29 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
+const handleSignOut = async () => {
+  try {
+    await axiosInstance.post(`${apiUrl}/auth/sign-out`)
+
+    toast({
+      variant: 'default',
+      title: 'Success',
+      description: 'Sign out success, enjoy!',
+    })
+
+    console.log(window.location.pathname)
+    window.location.pathname = '/'
+  } catch (e) {
+    console.error('error', e)
+    toast({
+      variant: 'destructive',
+      title: 'Error',
+      description: 'Sign out error',
+    })
+    return
+  }
+}
 </script>
 
 <template>
@@ -55,9 +83,7 @@ onUnmounted(() => {
             <nav
               :class="{ hidden: !open }"
               id="navbarCollapse"
-              class="absolute right-12 top-8 w-full max-w-[250px] rounded-lg px-6 py-5 shadow
-              lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none bg-card border border-border
-              lg:border-none lg:bg-card z-20"
+              class="absolute right-12 top-8 w-full max-w-[250px] rounded-lg px-6 py-5 shadow lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none bg-card border border-border lg:border-none lg:bg-card z-20"
             >
               <ul class="block lg:flex">
                 <template v-for="(item, index) in navLinkItems" :key="index">
@@ -71,26 +97,38 @@ onUnmounted(() => {
                     </RouterLink>
                   </li>
                 </template>
-                  <li class="py-2 sm:hidden">
-                    <RouterLink to="/sign-in">Sign In</RouterLink>
-                  </li>
-                  <li class="py-2 sm:hidden">
-                    <RouterLink to="/sign-up">Sign Up</RouterLink>
-                  </li>
+                <li v-if="!isTrue" class="py-2 sm:hidden">
+                  <RouterLink to="/sign-in">Sign In</RouterLink>
+                </li>
+                <li v-if="!isTrue" class="py-2 sm:hidden">
+                  <RouterLink to="/sign-up">Sign Up</RouterLink>
+                </li>
+                <li v-if="isTrue" class="py-2 sm:hidden">
+                  <button v-on:click="handleSignOut">Sign Out</button>
+                </li>
               </ul>
             </nav>
           </div>
           <div class="hidden justify-end pr-16 mt-2 sm:flex lg:pr-0">
             <RouterLink
+              v-if="!isTrue"
               to="/sign-in"
               class="px-7 py-3 text-base font-medium text-dark hover:text-primary hover:bg-secondary-foreground"
               >Sign in
             </RouterLink>
             <RouterLink
+              v-if="!isTrue"
               to="/sign-up"
               class="rounded-md bg-primary px-7 py-3 text-base font-medium text-white hover:bg-primary/90"
               >Sign Up
             </RouterLink>
+            <button
+              v-if="isTrue"
+              v-on:click="handleSignOut"
+              class="rounded-md bg-primary px-7 py-3 text-base font-medium text-white hover:bg-primary/90"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </div>

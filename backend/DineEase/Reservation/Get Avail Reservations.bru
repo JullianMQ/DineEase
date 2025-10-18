@@ -1,0 +1,15 @@
+meta {
+  name: Get Avail Reservations
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{localURL}}/api/reservations/avail
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,10 +1,10 @@
-<script lang="ts">
+<script setup lang="ts">
+import Footer from '@/components/Footer.vue';
 import { RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <!-- ====== About Section Start -->
-  <section class="mx-2 overflow-hidden bg-white pt-20 pb-12 lg:mx-0 lg:pt-20 lg:pb-[90px]">
+  <section class="mx-2 overflow-hidden bg-white pt-20 lg:mx-0 lg:pt-20">
     <div class="container mx-auto">
       <div class="-mx-4 flex flex-wrap items-center justify-between">
         <div class="w-full px-4 lg:w-6/12">
@@ -636,6 +636,6 @@ import { RouterLink } from 'vue-router'
         </div>
       </div>
     </div>
+    <Footer class="mt-20"/>
   </section>
-  <!-- ====== About Section End -->
 </template>

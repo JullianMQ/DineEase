@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import { db } from "../utils/db.js";
 import { NewError, NewSuccess, type HandlerResult } from "../utils/success.js";
-import { ZodError } from "zod";
+import { date, ZodError } from "zod";
 import {
   reservationSchemaChecker,
   zodReservationSchema,
@@ -35,6 +35,28 @@ const getAllReservations = async (c: Context) => {
       .find({ email: session.user.email })
       .toArray();
     return reservationData;
+  } catch (e) {
+    throw `Error: ${e}`;
+  }
+};
+
+const getAvailReservation = async (c: Context) => {
+  try {
+    const availReservation = await reservations
+      .find(
+        {},
+        {
+          projection: {
+            _id: 0,
+            seat_num: 1,
+            date: 1,
+            time: 1,
+          },
+        },
+      )
+      .toArray();
+
+    return availReservation;
   } catch (e) {
     throw `Error: ${e}`;
   }
@@ -170,6 +192,7 @@ const deleteReservation = async (c: Context): Promise<HandlerResult> => {
 };
 export {
   getAllReservations,
+  getAvailReservation,
   createReservation,
   updateReservation,
   deleteReservation,

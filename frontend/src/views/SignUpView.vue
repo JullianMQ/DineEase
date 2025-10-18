@@ -10,6 +10,27 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ref } from 'vue'
+
+const formData = ref<{
+  first_name: string
+  last_name: string
+  email: string
+  password: string
+}>({
+  first_name: '',
+  last_name: '',
+  email: '',
+  password: '',
+})
+
+const handleSubmit = () => {
+  console.log('Form Data:', formData.value)
+  console.log('First name:', formData.value.first_name)
+  console.log('Last name:', formData.value.last_name)
+  console.log('Email:', formData.value.email)
+  console.log('Password:', formData.value.password)
+}
 </script>
 
 <template>
@@ -20,27 +41,63 @@ import { Label } from '@/components/ui/label'
         <CardDescription> Enter your information to create an account </CardDescription>
       </CardHeader>
       <CardContent>
-        <div class="grid gap-4">
+        <form @submit.prevent="handleSubmit" class="grid gap-4">
           <div class="grid grid-cols-2 gap-4">
             <div class="grid gap-2">
               <Label for="first-name">First name</Label>
-              <Input id="first-name" placeholder="Max" required />
+              <Input
+                id="first-name"
+                type="text"
+                v-model="formData.first_name"
+                placeholder="Max"
+                required
+              />
             </div>
             <div class="grid gap-2">
               <Label for="last-name">Last name</Label>
-              <Input id="last-name" placeholder="Robinson" required />
+              <Input
+                id="last-name"
+                type="text"
+                v-model="formData.last_name"
+                placeholder="Robinson"
+                required
+              />
             </div>
           </div>
           <div class="grid gap-2">
             <Label for="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required />
+            <Input
+              id="email"
+              v-model="formData.email"
+              type="email"
+              placeholder="m@example.com"
+              required
+            />
           </div>
           <div class="grid gap-2">
             <Label for="password">Password</Label>
-            <Input id="password" type="password" placeholder="*********" />
+            <Input
+              id="password"
+              v-model="formData.password"
+              type="password"
+              placeholder="*********"
+              required
+            />
           </div>
+          <!-- TODO: ADD PASSWORD CONFIRMATION
+          <div class="grid gap-2">
+            <Label for="password">Confirm Password</Label>
+            <Input
+              id="password"
+              v-model="formData.password"
+              type="password"
+              placeholder="*********"
+              required
+            />
+          </div>
+          -->
           <Button type="submit" class="w-full"> Create an account </Button>
-        </div>
+        </form>
         <div class="mt-4 text-center text-sm">
           Already have an account?
           <RouterLink to="/sign-in" class="underline"> Sign in </RouterLink>

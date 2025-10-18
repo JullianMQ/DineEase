@@ -1,15 +1,51 @@
-<script lang="ts">
-export const description =
-  "A sign up form with first name, last name, email and password inside a card. There's an option to sign up with GitHub and a link to login if you already have an account"
-export const iframeHeight = '600px'
-export const containerClass = 'w-full h-screen flex items-center justify-center px-4'
-</script>
-
 <script setup lang="ts">
+import axiosInstance, { apiUrl } from '@/api/config'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/components/ui/toast'
+import router from '@/router'
+import { ref } from 'vue'
+
+const formData = ref<{
+  email: string
+  password: string
+}>({
+  email: '',
+  password: '',
+})
+
+const resetForm = () => {
+  formData.value.email = ''
+  formData.value.password = ''
+}
+
+const handleSubmit = async () => {
+  try {
+    const res = await axiosInstance.post(`${apiUrl}/auth/sign-in/email`, {
+      email: formData.value.email,
+      password: formData.value.password,
+    })
+    console.log('res', res)
+    toast({
+      variant: 'default',
+      title: 'Success',
+      description: 'Sign in success, enjoy!',
+    })
+
+    resetForm()
+    window.location.pathname = '/'
+  } catch (e) {
+    console.error('error', e)
+    toast({
+      variant: 'destructive',
+      title: 'Error',
+      description: 'Sign in error, please make sure your credentials are correct',
+    })
+    return
+  }
+}
 </script>
 
 <template>
@@ -20,17 +56,28 @@ import { Label } from '@/components/ui/label'
         <CardDescription> Enter your email and password to sign in</CardDescription>
       </CardHeader>
       <CardContent>
-        <div class="grid gap-4">
+        <form @submit.prevent="handleSubmit" class="grid gap-4">
           <div class="grid gap-2">
             <Label for="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required />
+            <Input
+              id="email"
+              type="email"
+              v-model="formData.email"
+              placeholder="m@example.com"
+              required
+            />
           </div>
           <div class="grid gap-2">
             <Label for="password">Password</Label>
-            <Input id="password" type="password" placeholder="*********" />
+            <Input
+              id="password"
+              v-model="formData.password"
+              type="password"
+              placeholder="*********"
+            />
           </div>
-          <Button type="submit" class="w-full"> Create an account </Button>
-        </div>
+          <Button type="submit" class="w-full"> Sign In </Button>
+        </form>
         <div class="mt-4 text-center text-sm">
           Don't have an account?
           <RouterLink to="/sign-up" class="underline"> Sign up </RouterLink>
